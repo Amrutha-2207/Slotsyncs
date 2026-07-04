@@ -30,6 +30,10 @@ def render_export() -> None:
         try:
             pdf_bytes = export_timetable_pdf(selected, student_name=name or "")
             filename = f"SlotSync_Timetable_{datetime.now():%Y%m%d}.pdf"
+            st.markdown(
+                '<div data-testid="download-pdf-btn"></div>',
+                unsafe_allow_html=True,
+            )
             st.download_button(
                 "⬇  Download PDF",
                 data=pdf_bytes,

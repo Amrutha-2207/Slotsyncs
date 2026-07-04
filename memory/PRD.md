@@ -4,96 +4,108 @@
 
 ## Original Problem Statement
 
-Continue the existing minimal Streamlit repo at
-`github.com/Amrutha-2207/SlotSync` and turn it into the BEST FFCS Planner
-VIT-AP students have ever used. Think Apple. Design like Linear. Build like
-Stripe. Minimal, elegant, and effortless — a student should build a complete
-timetable in 2–3 minutes.
+Build the best FFCS Planner VIT-AP students have ever used. Apple minimalism,
+Linear polish, Stripe production quality. A student picks a timetable in
+2–3 minutes. Pure Streamlit + Pandas, CSV-driven, no DB. Deployed on
+Streamlit Community Cloud.
 
-Four-step flow: **Search → Choose Faculty → Add Course → View Timetable**.
-Tech stack: Python + Streamlit + Pandas + Session State + CSV data. No DB.
-Persistent visitor counter that survives Streamlit Cloud restarts.
+**Iteration 2 refactor** (2026-01-04, evening):
+- Real VIT-AP timetable grid (Tue–Sat, 10 theory hrs + 12 lab hrs/day,
+  compound cells like `TC1/G1`).
+- Six real courses (DSA, AI, CAO, DMS, STS, Entrepreneurship).
+- New faculty.csv schema `CourseCode,CourseName,Component,FacultyName,Slot`.
+- Credit → slot pattern mapping (4cr = `A1+TA1+TAA1`, 3cr = `A1+TA1`,
+  2cr = `A1`, 1cr = `TA1`).
+- Interval-based clash detection (catches compound-cell aliasing and
+  theory ↔ lab time overlaps).
 
 ---
 
 ## User Personas
 
-- **The Registration-Day Student** — needs to build a clash-free timetable
-  under time pressure, on wobbly campus Wi-Fi.
-- **The Day Scholar** — wants only morning/afternoon options that fit
-  around a commute (no early or evening classes).
-- **The Optimiser** — wants to see every valid faculty combination and
-  compare them side-by-side.
+- **The Registration-Day Student** — needs a clash-free timetable under
+  pressure, on wobbly campus Wi-Fi.
+- **The Day Scholar** — wants options that fit around a commute (no
+  8:00 AM classes, no 6:30 PM classes).
+- **The Optimiser** — wants to see every valid faculty combination
+  side-by-side.
 
 ---
 
 ## Core Requirements (static)
 
-- Fully data-driven from `data/courses.csv` and `data/faculty.csv`.
-- Slot-atom decomposition (`A1+TA1+TAA1`, `L37+L38`) with cell-level
-  overlap detection.
-- Theory and Lab picked independently per course.
-- Automatic timetable generator (cartesian product, clash-filtered).
-- PDF export of the finalised timetable + course list.
-- Persistent visitor counter that survives redeploys.
-- Streamlit Community Cloud deployable out of the box.
+- Fully data-driven from `data/courses.csv` + `data/faculty.csv`.
+- Slot-atom decomposition + interval overlap for compound cells.
+- Independent Theory + Lab per course.
+- Automatic timetable generator (cartesian × clash-filter).
+- Day-Scholar vs Hosteller modes.
+- PDF export.
+- Persistent visitor counter surviving Streamlit Cloud restarts.
 
 ---
 
-## What's implemented (2026-01-04)
+## What's implemented (2026-01-04, iteration 2)
 
 ### Data / core logic
-- `utils/slots.py` — canonical VIT-AP FFCS grid (5 days × 12 bands, theory
-  + lab lanes), atom splitter, cell-mapping helpers.
-- `utils/clash.py` — cell-based clash detection, internal (theory↔lab)
-  overlap, combo-level clash for the generator.
-- `utils/data.py` — cached CSV loading with tolerant column normalisation.
-- `utils/generator.py` — cartesian product of every faculty combination
-  with Day-Scholar filter and configurable max-options cap.
-- `utils/counter.py` — persistent visitor counter via
-  `abacus.jasoncameron.dev` with local JSON fallback.
-- `utils/export.py` — landscape A4 PDF via ReportLab with course list.
-- `utils/style.py` — Apple/Linear-inspired CSS (Instrument Serif + Geist).
-- `utils/timetable.py` — grid builder + HTML renderer with soft palette.
+- `utils/slots.py` — canonical VIT-AP grid (Tue–Sat) with THEORY_GRID
+  (10 hrs × 5 days), LAB_GRID (12 hrs × 5 days), and
+  `SLOT_TO_INTERVALS` resolving compound cells to physical minute-bands.
+- `utils/clash.py` — physical-interval overlap detection
+  (`clashes_with`, `combo_clash`, `has_internal_clash`).
+- `utils/data.py` — tolerant CSV loading with new schema + legacy
+  fallback (auto-backfills `CourseCode` from `CourseName`).
+- `utils/generator.py` — cartesian generator using `course_code`; Day
+  Scholar filter in minutes.
+- `utils/counter.py` — abacus.jasoncameron.dev counter + local fallback.
+- `utils/export.py` — landscape A4 PDF with the Tue–Sat grid + course
+  list.
+- `utils/timetable.py` — HTML grid renderer, 5 days × 2 rows each,
+  compound cells resolved via atom membership.
+- `utils/style.py` — Instrument Serif + Geist typography; tightened
+  timetable CSS for the denser lab row.
 
-### UI components (tabs on a single page)
-- `components/hero.py` — hero, six feature chips, three stat cards
-  (Courses / Faculty / Students Helped).
-- `components/search.py` — search box, course expander cards, Theory + Lab
-  dropdowns with per-option clash indicator (🟢 / 🟠), Add/Update button.
-- `components/selected.py` — selected list with credits summary and edit /
-  delete controls.
-- `components/timetable_view.py` — beautiful 5-day timetable with colour
-  legend.
-- `components/generator.py` — Option 01/02/…, per-option preview + Apply.
-- `components/export.py` — Download PDF button.
+### UI components
+- `components/hero.py`, `search.py`, `selected.py`,
+  `timetable_view.py`, `generator.py`, `export.py` — all wired to the
+  new `CourseCode`-based API. Search fixed IndexError on Theory+Lab
+  courses with empty lab data.
 
 ### App shell
-- `app.py` — page config, sidebar (Hosteller / Day Scholar radio, session
-  summary, Clear All), tabs, footer.
-- `.streamlit/config.toml` — theme + server settings for Streamlit Cloud.
-- `requirements.txt`, `.gitignore`, `README.md` — deployment-ready.
-- Sample data with 15 courses + 48 faculty offerings (real VIT-AP style
-  slots) for immediate use; user will overwrite with live registration data.
+- `app.py`, `.streamlit/config.toml`, `requirements.txt`, `.gitignore`,
+  comprehensive `README.md` with data schema, credit mapping table,
+  deployment instructions, and clash-detection cheatsheet.
+
+### Data
+- `data/courses.csv` — 6 courses:
+  - CSE2001 DSA 4 cr Theory+Lab
+  - CSE2002 AI 4 cr Theory
+  - CSE2003 CAO 4 cr Theory+Lab
+  - MAT2001 DMS 4 cr Theory
+  - STS1001 STS 1 cr Theory
+  - MGT2001 Entrepreneurship 4 cr Theory
+- `data/faculty.csv` — 25 offerings, 19 unique placeholder faculty,
+  new `CourseCode,CourseName,Component,FacultyName,Slot` schema.
+  User will overwrite with real registration data post-live.
 
 ### Testing status
-- E2E frontend testing (Playwright) — **100 % pass** on all 13 flows:
-  hero, search filter, expander open, Theory/Lab dropdowns, clash detection,
-  add/update, selected panel, timetable render, auto-generator, day-scholar
-  filter, sidebar toggle, PDF export, error resilience.
+- E2E frontend (Playwright) — iteration 1 pre-refactor 100%.
+- E2E frontend iteration 2 (post-refactor) — **100 % pass** on all 16
+  flows (hero, search, expander, dropdowns, compound-cell clash,
+  interval clash, timetable Tue–Sat render, generator, Day Scholar,
+  Apply, PDF export, selected/edit/delete, robustness).
+- Self-review: no lint errors, all sanity assertions pass, PDF
+  produces valid `%PDF`.
 
 ---
 
 ## Backlog / P1 (post-launch polish)
 
-- **P1** — Add a subtle "overlapping course" warning in the timetable cell
-  itself when the user overrides a flagged clash.
-- **P1** — Live-as-you-type search (bypass Streamlit's Enter/blur commit)
-  with a small debounce via a `st.text_input` callback.
-- **P2** — Per-slot preference weighting in the generator (e.g. "prefer
-  morning" / "avoid Wednesday").
-- **P2** — Save/load timetable JSON to browser localStorage so a student
-  can return later without repicking.
+- **P1** — Live-as-you-type search (bypass Streamlit's Enter/blur
+  commit) with debounce.
+- **P1** — Highlight overlapping courses inside the timetable cell
+  itself when the user overrides a warned clash.
+- **P2** — Shareable-timetable URL (encode selection in query params).
+- **P2** — Save/load timetable JSON to browser localStorage.
 - **P2** — Optional dark-mode CSS variant.
 
 ---
@@ -106,15 +118,22 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-**Streamlit Community Cloud:** push to GitHub → New App → point to
-`app.py`. Nothing else to configure — `.streamlit/config.toml` and
-`requirements.txt` are already tuned.
+**Streamlit Community Cloud:**
+1. Save to GitHub (Emergent chat input) → repo `Amrutha-2207/SlotSync`.
+2. share.streamlit.io → New app → point to `app.py`.
+3. Deploy. `.streamlit/config.toml` + `requirements.txt` are pre-tuned.
+
+**Updating data post-deploy:** just edit the two CSVs, commit, push.
+Streamlit Cloud redeploys automatically.
 
 ---
 
 ## Next Action Items
 
-1. Overwrite `data/courses.csv` and `data/faculty.csv` with the real
-   post-registration data (schema unchanged).
-2. Deploy to Streamlit Community Cloud from the SlotSync repo.
-3. (Optional polish) implement the P1 items above.
+1. **Push to GitHub** using the "Save to GitHub" button in the Emergent
+   chat input — this will publish the code to
+   `https://github.com/Amrutha-2207/SlotSync`.
+2. Deploy on Streamlit Community Cloud (see README).
+3. Once registration data arrives, replace `data/faculty.csv` (same
+   schema) — no code changes needed.
+4. Optional polish: P1 items above.
