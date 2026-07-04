@@ -1,0 +1,16 @@
+Course Code,Course Name,Credits,Course Type
+CSE1002,Artificial Intelligence,3,Theory
+CSE2001,Data Structures and Algorithms,4,Theory+Lab
+CSE2002,Database Management Systems,4,Theory+Lab
+CSE2003,Computer Organization and Architecture,3,Theory
+CSE2004,Operating Systems,4,Theory+Lab
+CSE3001,Computer Networks,4,Theory+Lab
+CSE3002,Software Engineering,3,Theory
+CSE3003,Web Programming,3,Theory+Lab
+CSE3004,Machine Learning,4,Theory+Lab
+CSE3005,Cloud Computing,3,Theory
+MAT1001,Calculus and Linear Algebra,4,Theory
+MAT1002,Discrete Mathematics,3,Theory
+PHY1001,Engineering Physics,3,Theory+Lab
+ENG1001,Technical English,2,Theory
+MGT1001,Principles of Management,2,Theory

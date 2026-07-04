@@ -1,0 +1,49 @@
+Course,Component,Faculty,Slot
+Artificial Intelligence,Theory,Monali Bordoloi,A1+TA1
+Artificial Intelligence,Theory,Rajesh Kumar,B1+TB1
+Artificial Intelligence,Theory,Priya Nair,C1+TC1
+Data Structures and Algorithms,Theory,Deepashika Mishra,A1+TA1
+Data Structures and Algorithms,Theory,Vikram Iyer,D1+TD1
+Data Structures and Algorithms,Theory,Suresh Reddy,E1+TE1
+Data Structures and Algorithms,Lab,Deepashika Mishra,L37+L38
+Data Structures and Algorithms,Lab,Vikram Iyer,L43+L44
+Data Structures and Algorithms,Lab,Suresh Reddy,L21+L22
+Database Management Systems,Theory,Anita Sharma,B1+TB1
+Database Management Systems,Theory,Karthik Menon,F1+TF1
+Database Management Systems,Lab,Anita Sharma,L15+L16
+Database Management Systems,Lab,Karthik Menon,L49+L50
+Computer Organization and Architecture,Theory,Ramesh Babu,D1+TD1
+Computer Organization and Architecture,Theory,Neha Gupta,G1+TG1
+Operating Systems,Theory,Sanjay Verma,C1+TC1
+Operating Systems,Theory,Meera Krishnan,E1+TE1
+Operating Systems,Lab,Sanjay Verma,L9+L10
+Operating Systems,Lab,Meera Krishnan,L27+L28
+Computer Networks,Theory,Arjun Pillai,A2+TA2
+Computer Networks,Theory,Divya Rao,C2+TC2
+Computer Networks,Lab,Arjun Pillai,L45+L46
+Computer Networks,Lab,Divya Rao,L51+L52
+Software Engineering,Theory,Kavitha Nair,B2+TB2
+Software Engineering,Theory,Prakash Joshi,D2+TD2
+Web Programming,Theory,Rohit Malhotra,F2+TF2
+Web Programming,Theory,Sneha Kapoor,G2+TG2
+Web Programming,Lab,Rohit Malhotra,L33+L34
+Web Programming,Lab,Sneha Kapoor,L57+L58
+Machine Learning,Theory,Amit Bansal,A1+TA1+TAA1
+Machine Learning,Theory,Pooja Desai,B1+TB1+TBB1
+Machine Learning,Lab,Amit Bansal,L31+L32
+Machine Learning,Lab,Pooja Desai,L39+L40
+Cloud Computing,Theory,Nikhil Saxena,E2+TE2
+Cloud Computing,Theory,Rekha Iyer,F1+TF1
+Calculus and Linear Algebra,Theory,Dr. Balakrishnan,A1+TA1
+Calculus and Linear Algebra,Theory,Dr. Sreelatha,B1+TB1
+Calculus and Linear Algebra,Theory,Dr. Prasad,C1+TC1
+Discrete Mathematics,Theory,Dr. Radhika,D1+TD1
+Discrete Mathematics,Theory,Dr. Venkat,F1+TF1
+Engineering Physics,Theory,Dr. Anand,E1+TE1
+Engineering Physics,Theory,Dr. Lakshmi,G1+TG1
+Engineering Physics,Lab,Dr. Anand,L3+L4
+Engineering Physics,Lab,Dr. Lakshmi,L25+L26
+Technical English,Theory,Prof. Fernandes,C2+TC2
+Technical English,Theory,Prof. D'Souza,E2+TE2
+Principles of Management,Theory,Dr. Chatterjee,F2+TF2
+Principles of Management,Theory,Dr. Bhattacharya,G2+TG2

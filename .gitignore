@@ -1,0 +1,30 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Streamlit ----
+.streamlit/secrets.toml
+
+# ---- OS / Editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---- Data (runtime) ----
+data/visitor_count.json
+
+# ---- Node (used only in the Emergent preview shell) ----
+node_modules/
+frontend/node_modules/
+frontend/build/
+.yarn/
+yarn-error.log
