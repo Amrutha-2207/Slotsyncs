@@ -41,7 +41,6 @@ CSE3002,Artificial Intelligence,Theory,Yarlagadda Siva Reshma,C1+TC1
 CSE3002,Artificial Intelligence,Theory,Ajith Jubilson E,A1+TA1
 CSE3002,Artificial Intelligence,Theory,Ajith Jubilson E,A2+TA2
 CSE3002,Artificial Intelligence,Theory,Burla Nagaraju,C1+TC1
-CourseCode,CourseName,Component,FacultyName,Slot
 CSE3002,Artificial Intelligence,Lab,Siddique Ibrahim Peer Mohamed,L19+L20
 CSE3002,Artificial Intelligence,Lab,Prof.SCOPE Dig Crs Faculty-25,L47+L48
 CSE3002,Artificial Intelligence,Lab,Surendra Reddy Vinta,L25+L26
@@ -89,7 +88,6 @@ CSE3002,Artificial Intelligence,Lab,Ajith Jubilson E,L11+L12
 CSE3002,Artificial Intelligence,Lab,Balusa Bhanu Chander,L37+L38
 CSE3002,Artificial Intelligence,Lab,Siddique Ibrahim Peer Mohamed,L37+L38
 CSE3002,Artificial Intelligence,Lab,Mukkoti Maruthi Venkata Chalapathi,L43+L44
-CourseCode,CourseName,Component,FacultyName,Slot
 ECE2002,Computer Architecture and Organization,Theory,KADIYAM RAJSHEKAR,A2+TA2+TAA2
 ECE2002,Computer Architecture and Organization,Theory,ARKDEV,A2+TA2+TAA2
 ECE2002,Computer Architecture and Organization,Theory,Girish Kumar Mekala,A2+TA2+TAA2
@@ -134,7 +132,6 @@ ECE2002,Computer Architecture and Organization,Theory,Jayashree Pradhan,A2+TA2+T
 ECE2002,Computer Architecture and Organization,Theory,Ankur Pandey,B1+TB1+TBB1
 ECE2002,Computer Architecture and Organization,Theory,Jayashree Pradhan,B1+TB1+TBB1
 ECE2002,Computer Architecture and Organization,Theory,Vivek Upadhyaya,B2+TB2+TBB2
-CourseCode,CourseName,Component,FacultyName,Slot
 MAT1003,Discrete Mathematical Structures,Theory,V. Raja,B2+TB2+TBB2
 MAT1003,Discrete Mathematical Structures,Theory,S V Gomathi,C2+SC2+TC2
 MAT1003,Discrete Mathematical Structures,Theory,N Rajashekar,B2+TB2+TBB2
@@ -179,7 +176,6 @@ MAT1003,Discrete Mathematical Structures,Theory,Soumen Kundu,B2+TB2+TBB2
 MAT1003,Discrete Mathematical Structures,Theory,Manisha Maity,C1+TC1+TCC1
 MAT1003,Discrete Mathematical Structures,Theory,Jyotsna Sharma,C1+TC1+TCC1
 MAT1003,Discrete Mathematical Structures,Theory,Jyotsna Sharma,C2+TC2+TCC2
-CourseCode,CourseName,Component,FacultyName,Slot
 STS2010,Qualitative And Quantitative Skills Practice - I,Theory,Prof Musthaq,B2+TB2
 STS2010,Qualitative And Quantitative Skills Practice - I,Theory,Prof.Six Phrase Faculty-9,B1+TB1
 STS2010,Qualitative And Quantitative Skills Practice - I,Theory,Prof.VISH Dig Crs Faculty-3,B2+TB2
@@ -239,7 +235,6 @@ STS2010,Qualitative And Quantitative Skills Practice - I,Theory,Mamatha,F1+TF1
 STS2010,Qualitative And Quantitative Skills Practice - I,Theory,RAMESH,F1+TF1
 STS2010,Qualitative And Quantitative Skills Practice - I,Theory,MANIKANTA K,F2+TF2
 STS2010,Qualitative And Quantitative Skills Practice - I,Theory,DURGA PRASAD L,F2+TF2
-CourseCode,CourseName,Component,FacultyName,Slot
 MGT1040,Entrepreneurship,Theory,Umer Mushtaq lone,E1+TE1
 MGT1040,Entrepreneurship,Theory,N.Prabhakar,E1+TE1
 MGT1040,Entrepreneurship,Theory,Vadithe Rakesh Naik,E1+TE1
@@ -265,7 +260,6 @@ MGT1040,Entrepreneurship,Theory,Prof.VSB Dig Crs Faculty-4,F2+TFF2
 MGT1040,Entrepreneurship,Theory,EEDI SURESH,G1+TG1
 MGT1040,Entrepreneurship,Theory,NAGA NIVEDITA GUNTUR,G1+TG1
 MGT1040,Entrepreneurship,Theory,Prof.VSB Dig Crs Faculty-2,G1+TG1
-CourseCode,CourseName,Component,FacultyName,Slot
 CSE2001,Data Structures and Algorithms,Theory,MATTAKOYYA AHARONU,D1+TDD1
 CSE2001,Data Structures and Algorithms,Theory,MADALA GARGI,D1+TDD1
 CSE2001,Data Structures and Algorithms,Theory,MATTAKOYYA AHARONU,D2+TDD2
@@ -318,7 +312,6 @@ CSE2001,Data Structures and Algorithms,Theory,Deepasikha Mishra,D2+TD2
 CSE2001,Data Structures and Algorithms,Theory,Deepasikha Mishra,D1+TD1
 CSE2001,Data Structures and Algorithms,Theory,Sandipan Maiti,D1+TD1
 CSE2001,Data Structures and Algorithms,Theory,PUTTA DURGA,E1+TE1
-CourseCode,CourseName,Component,FacultyName,Slot
 CSE2001,Data Structures and Algorithms,Lab,Naga Jagadesh Bommagani,L29+L30
 CSE2001,Data Structures and Algorithms,Lab,SYAMALA MURALI KRISHNA,L39+L40
 CSE2001,Data Structures and Algorithms,Lab,Radha Mohan Pattanayak,L5+L6
