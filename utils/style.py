@@ -198,27 +198,30 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* Selected course pill */
 .ss-selected {
-  background: var(--surface); border:1px solid var(--line);
-  border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;
-  display:flex; justify-content: space-between; align-items:center; gap:14px;
+    background: var(--surface); border:1px solid var(--line);
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;
+    display:flex; justify-content: space-between; align-items:center; gap:14px;
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 9999 !important;
 }
 .ss-selected .left { min-width:0; }
 .ss-selected .code {
-  font-family:'Geist Mono', monospace; font-size:11px; letter-spacing:.14em;
-  color: var(--muted); text-transform: uppercase;
+    font-family: 'Geist Mono', monospace; font-size:11px; letter-spacing:.14em;
+    color: var(--muted); text-transform: uppercase;
 }
 .ss-selected .name {
-  font-size:15px; font-weight:600; letter-spacing:-0.01em; margin-top:2px;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-size:15px; font-weight:600; letter-spacing:-0.01em; margin-top:2px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .ss-selected .meta {
-  font-size:12px; color: var(--ink-2); margin-top:4px;
-  display:flex; flex-wrap:wrap; gap:8px;
+    font-size:12px; color: var(--ink-2); margin-top:4px;
+    display:flex; flex-wrap:wrap; gap:8px;
 }
 .ss-selected .meta span {
-  padding: 2px 8px; border:1px solid var(--line); border-radius:999px;
-  background: var(--accent-soft);
-  font-family:'Geist Mono', monospace; font-size:11px;
+    padding: 2px 8px; border:1px solid var(--line); border-radius:999px;
+    background: var(--accent-soft);
+    font-family: 'Geist Mono', monospace; font-size:11px;
 }
 
 /* Clash callout */
