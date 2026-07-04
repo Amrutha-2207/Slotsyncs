@@ -1,49 +1,26 @@
-Course,Component,Faculty,Slot
-Artificial Intelligence,Theory,Monali Bordoloi,A1+TA1
-Artificial Intelligence,Theory,Rajesh Kumar,B1+TB1
-Artificial Intelligence,Theory,Priya Nair,C1+TC1
-Data Structures and Algorithms,Theory,Deepashika Mishra,A1+TA1
-Data Structures and Algorithms,Theory,Vikram Iyer,D1+TD1
-Data Structures and Algorithms,Theory,Suresh Reddy,E1+TE1
-Data Structures and Algorithms,Lab,Deepashika Mishra,L37+L38
-Data Structures and Algorithms,Lab,Vikram Iyer,L43+L44
-Data Structures and Algorithms,Lab,Suresh Reddy,L21+L22
-Database Management Systems,Theory,Anita Sharma,B1+TB1
-Database Management Systems,Theory,Karthik Menon,F1+TF1
-Database Management Systems,Lab,Anita Sharma,L15+L16
-Database Management Systems,Lab,Karthik Menon,L49+L50
-Computer Organization and Architecture,Theory,Ramesh Babu,D1+TD1
-Computer Organization and Architecture,Theory,Neha Gupta,G1+TG1
-Operating Systems,Theory,Sanjay Verma,C1+TC1
-Operating Systems,Theory,Meera Krishnan,E1+TE1
-Operating Systems,Lab,Sanjay Verma,L9+L10
-Operating Systems,Lab,Meera Krishnan,L27+L28
-Computer Networks,Theory,Arjun Pillai,A2+TA2
-Computer Networks,Theory,Divya Rao,C2+TC2
-Computer Networks,Lab,Arjun Pillai,L45+L46
-Computer Networks,Lab,Divya Rao,L51+L52
-Software Engineering,Theory,Kavitha Nair,B2+TB2
-Software Engineering,Theory,Prakash Joshi,D2+TD2
-Web Programming,Theory,Rohit Malhotra,F2+TF2
-Web Programming,Theory,Sneha Kapoor,G2+TG2
-Web Programming,Lab,Rohit Malhotra,L33+L34
-Web Programming,Lab,Sneha Kapoor,L57+L58
-Machine Learning,Theory,Amit Bansal,A1+TA1+TAA1
-Machine Learning,Theory,Pooja Desai,B1+TB1+TBB1
-Machine Learning,Lab,Amit Bansal,L31+L32
-Machine Learning,Lab,Pooja Desai,L39+L40
-Cloud Computing,Theory,Nikhil Saxena,E2+TE2
-Cloud Computing,Theory,Rekha Iyer,F1+TF1
-Calculus and Linear Algebra,Theory,Dr. Balakrishnan,A1+TA1
-Calculus and Linear Algebra,Theory,Dr. Sreelatha,B1+TB1
-Calculus and Linear Algebra,Theory,Dr. Prasad,C1+TC1
-Discrete Mathematics,Theory,Dr. Radhika,D1+TD1
-Discrete Mathematics,Theory,Dr. Venkat,F1+TF1
-Engineering Physics,Theory,Dr. Anand,E1+TE1
-Engineering Physics,Theory,Dr. Lakshmi,G1+TG1
-Engineering Physics,Lab,Dr. Anand,L3+L4
-Engineering Physics,Lab,Dr. Lakshmi,L25+L26
-Technical English,Theory,Prof. Fernandes,C2+TC2
-Technical English,Theory,Prof. D'Souza,E2+TE2
-Principles of Management,Theory,Dr. Chatterjee,F2+TF2
-Principles of Management,Theory,Dr. Bhattacharya,G2+TG2
+CourseCode,CourseName,Component,FacultyName,Slot
+CSE2001,Data Structures and Algorithms,Theory,Faculty A,A1+TA1+TAA1
+CSE2001,Data Structures and Algorithms,Theory,Faculty B,B1+TB1+TBB1
+CSE2001,Data Structures and Algorithms,Theory,Faculty C,C1+TC1+TCC1
+CSE2001,Data Structures and Algorithms,Lab,Faculty A,L37+L38
+CSE2001,Data Structures and Algorithms,Lab,Faculty B,L21+L22
+CSE2001,Data Structures and Algorithms,Lab,Faculty C,L45+L46
+CSE2002,Artificial Intelligence,Theory,Faculty D,D1+TD1+TDD1
+CSE2002,Artificial Intelligence,Theory,Faculty E,E1+TE1+TEE1
+CSE2002,Artificial Intelligence,Theory,Faculty F,F1+TF1+TFF1
+CSE2003,Computer Architecture and Organization,Theory,Faculty G,G1+TG1+TGG1
+CSE2003,Computer Architecture and Organization,Theory,Faculty H,A2+TA2+TAA2
+CSE2003,Computer Architecture and Organization,Theory,Faculty I,B2+TB2+TBB2
+CSE2003,Computer Architecture and Organization,Lab,Faculty G,L3+L4
+CSE2003,Computer Architecture and Organization,Lab,Faculty H,L27+L28
+CSE2003,Computer Architecture and Organization,Lab,Faculty I,L51+L52
+MAT2001,Discrete Mathematical Structures,Theory,Faculty J,C2+TC2+TCC2
+MAT2001,Discrete Mathematical Structures,Theory,Faculty K,D2+TD2+TDD2
+MAT2001,Discrete Mathematical Structures,Theory,Faculty L,E2+TE2+TEE2
+STS1001,Qualitative and Quantitative Skills Practice I (STS),Theory,STS Trainer 1,TA1
+STS1001,Qualitative and Quantitative Skills Practice I (STS),Theory,STS Trainer 2,TB1
+STS1001,Qualitative and Quantitative Skills Practice I (STS),Theory,STS Trainer 3,TC2
+STS1001,Qualitative and Quantitative Skills Practice I (STS),Theory,STS Trainer 4,TD2
+MGT2001,Entrepreneurship,Theory,Faculty M,F2+TF2+TFF2
+MGT2001,Entrepreneurship,Theory,Faculty N,G2+TG2+TGG2
+MGT2001,Entrepreneurship,Theory,Faculty O,A1+TA1+TAA1

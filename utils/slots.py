@@ -1,101 +1,158 @@
-"""VIT-AP FFCS Slot System — canonical grid & helpers."""
+"""VIT-AP FFCS Slot System — canonical grid (Tue–Sat).
+
+This mirrors the official VIT-AP timetable exactly:
+- 5 class days: TUE, WED, THU, FRI, SAT
+- Theory has 10 hours per day (5 morning + 5 afternoon), separated by lunch
+- Lab has 12 hours per day (6 morning + 6 afternoon), with tighter 50-min bands
+- Some theory cells are "compound" — e.g. `TC1/G1` means the same physical
+  time is claimed by two slot names. A course picking either name clashes
+  with a course picking the other. We resolve everything to a physical
+  minute-interval and check overlap.
+"""
 from __future__ import annotations
 
-# Standard VIT-AP FFCS timetable grid.
-# Each day has 12 rows (11 class rows + 1 lunch). Each cell can hold a
-# theory slot and a lab slot that share the same physical time band.
+DAYS = ["TUE", "WED", "THU", "FRI", "SAT"]
 
-DAYS = ["MON", "TUE", "WED", "THU", "FRI"]
+DAY_NAMES = {
+    "TUE": "Tuesday",  "WED": "Wednesday", "THU": "Thursday",
+    "FRI": "Friday",   "SAT": "Saturday",
+}
 
-# 12 time bands (index 0..11); a lunch band separates morning/afternoon.
-TIME_BANDS = [
-    ("08:00", "08:50"),
-    ("08:55", "09:45"),
-    ("09:50", "10:40"),
-    ("10:45", "11:35"),
-    ("11:40", "12:30"),
-    ("12:35", "13:25"),   # morning tail (mostly Lab-only)
-    ("14:00", "14:50"),
-    ("14:55", "15:45"),
-    ("15:50", "16:40"),
-    ("16:45", "17:35"),
-    ("17:40", "18:30"),
-    ("18:35", "19:25"),   # afternoon tail (mostly Lab-only)
+# ---------- Physical time bands (minutes since midnight) ----------
+# Theory: 5 morning + 5 afternoon (10 total). Lunch between P5 and P6.
+THEORY_BANDS = [
+    (480,  530),   # P1  08:00–08:50
+    (540,  590),   # P2  09:00–09:50
+    (600,  650),   # P3  10:00–10:50
+    (660,  710),   # P4  11:00–11:50
+    (720,  770),   # P5  12:00–12:50
+    (840,  890),   # P6  14:00–14:50
+    (900,  950),   # P7  15:00–15:50
+    (960,  1010),  # P8  16:00–16:50
+    (1020, 1070),  # P9  17:00–17:50
+    (1080, 1130),  # P10 18:00–18:50
 ]
 
-LUNCH_LABEL = ("13:25", "14:00")
+# Lab: 6 morning + 6 afternoon (12 total). Lunch between LP6 and LP7.
+LAB_BANDS = [
+    (480,  530),   # L·1  08:00–08:50
+    (530,  580),   # L·2  08:50–09:40
+    (590,  640),   # L·3  09:50–10:40
+    (640,  690),   # L·4  10:40–11:30
+    (700,  750),   # L·5  11:40–12:30
+    (750,  790),   # L·6  12:30–13:10
+    (840,  890),   # L·7  14:00–14:50
+    (890,  940),   # L·8  14:50–15:40
+    (950,  1000),  # L·9  15:50–16:40
+    (1000, 1050),  # L·10 16:40–17:30
+    (1060, 1110),  # L·11 17:40–18:30
+    (1110, 1150),  # L·12 18:30–19:10
+]
 
-# Theory slot layout: [day][band] -> theory slot code ("" if none)
-# Bands 0..4 morning theory, band 5 no theory, bands 6..10 afternoon, band 11 none.
-THEORY_GRID = {
-    "MON": ["A1",  "F1",   "D1",   "TB1",  "TG1",  "",  "A2",  "F2",   "D2",   "TB2",  "TG2",  ""],
-    "TUE": ["B1",  "G1",   "E1",   "TC1",  "TAA1", "",  "B2",  "G2",   "E2",   "TC2",  "TAA2", ""],
-    "WED": ["C1",  "A1",   "F1",   "TD1",  "TBB1", "",  "C2",  "A2",   "F2",   "TD2",  "TBB2", ""],
-    "THU": ["D1",  "B1",   "G1",   "TE1",  "TCC1", "",  "D2",  "B2",   "G2",   "TE2",  "TCC2", ""],
-    "FRI": ["E1",  "C1",   "A1",   "TF1",  "TDD1", "",  "E2",  "C2",   "A2",   "TF2",  "TDD2", ""],
+# ---------- Slot grids (as printed on the physical FFCS timetable) ----------
+# Compound "X/Y" cells occupy the same physical band and appear as siblings.
+THEORY_GRID: dict[str, list[str]] = {
+    "TUE": ["TFF1", "A1",       "B1",       "TC1/G1",     "D1",         "F2",         "A2",         "B2",         "TC2/G2",     "TDD2"],
+    "WED": ["TGG1", "D1",       "F1",       "E1/SC2",     "B1",         "D2",         "TF2/G2",     "E2/SC1",     "B2",         "TCC2"],
+    "THU": ["TEE1", "C1",       "TD1/TG1",  "TAA1/ECS",   "TBB1/CLUB",  "TE2/SE1",    "C2",         "TD2/TG2",    "A2",         "TFF2"],
+    "FRI": ["TCC1", "TB1",      "TA1",      "F1",         "TE1/SD2",    "C2",         "TB2",        "TA2",        "F2",         "TEE2"],
+    "SAT": ["TDD1", "E1/SE2",   "C1",       "TF1/G1",     "A1",         "D2",         "E2/SD1",     "TAA2/ECS",   "TBB2/CLUB",  "TGG2"],
 }
 
-# Lab slot layout: L1..L60, six per day per half.
-LAB_GRID = {
-    "MON": ["L1",  "L2",  "L3",  "L4",  "L5",  "L6",   "L31", "L32", "L33", "L34", "L35", "L36"],
-    "TUE": ["L7",  "L8",  "L9",  "L10", "L11", "L12",  "L37", "L38", "L39", "L40", "L41", "L42"],
-    "WED": ["L13", "L14", "L15", "L16", "L17", "L18",  "L43", "L44", "L45", "L46", "L47", "L48"],
-    "THU": ["L19", "L20", "L21", "L22", "L23", "L24",  "L49", "L50", "L51", "L52", "L53", "L54"],
-    "FRI": ["L25", "L26", "L27", "L28", "L29", "L30",  "L55", "L56", "L57", "L58", "L59", "L60"],
+# Lab slots run L1..L60. Six per day per half.
+LAB_GRID: dict[str, list[str]] = {
+    "TUE": [f"L{i}" for i in (1,  2,  3,  4,  5,  6,  31, 32, 33, 34, 35, 36)],
+    "WED": [f"L{i}" for i in (7,  8,  9,  10, 11, 12, 37, 38, 39, 40, 41, 42)],
+    "THU": [f"L{i}" for i in (13, 14, 15, 16, 17, 18, 43, 44, 45, 46, 47, 48)],
+    "FRI": [f"L{i}" for i in (19, 20, 21, 22, 23, 24, 49, 50, 51, 52, 53, 54)],
+    "SAT": [f"L{i}" for i in (25, 26, 27, 28, 29, 30, 55, 56, 57, 58, 59, 60)],
 }
 
 
-def _build_slot_to_cells() -> dict[str, list[tuple[str, int]]]:
-    m: dict[str, list[tuple[str, int]]] = {}
-    for day in DAYS:
-        for i, s in enumerate(THEORY_GRID[day]):
-            if s:
-                m.setdefault(s, []).append((day, i))
-        for i, s in enumerate(LAB_GRID[day]):
-            if s:
-                m.setdefault(s, []).append((day, i))
+# ---------- Slot atom → list of (day, start_min, end_min) ----------
+def _build_slot_intervals() -> dict[str, list[tuple[str, int, int]]]:
+    m: dict[str, list[tuple[str, int, int]]] = {}
+    for day, cells in THEORY_GRID.items():
+        for i, cell in enumerate(cells):
+            start, end = THEORY_BANDS[i]
+            for atom in cell.split("/"):
+                atom = atom.strip().upper()
+                if atom:
+                    m.setdefault(atom, []).append((day, start, end))
+    for day, cells in LAB_GRID.items():
+        for i, atom in enumerate(cells):
+            start, end = LAB_BANDS[i]
+            m.setdefault(atom.upper(), []).append((day, start, end))
     return m
 
 
-SLOT_TO_CELLS: dict[str, list[tuple[str, int]]] = _build_slot_to_cells()
+SLOT_TO_INTERVALS: dict[str, list[tuple[str, int, int]]] = _build_slot_intervals()
 
 
+# ---------- Helpers ----------
 def parse_slot_string(slot_str: str) -> list[str]:
-    """Split a compound slot like 'A1+TA1+TAA1' or 'L37+L38' into atoms."""
+    """Split a compound slot code like 'A1+TA1+TAA1' or 'L37+L38'."""
     if not slot_str or not isinstance(slot_str, str):
         return []
     return [tok.strip().upper() for tok in slot_str.split("+") if tok.strip()]
 
 
-def slots_to_cells(slot_str: str) -> set[tuple[str, int]]:
-    """Return the set of (day, band_idx) cells occupied by a compound slot."""
-    cells: set[tuple[str, int]] = set()
+def intervals_of_slot(slot_str: str) -> list[tuple[str, int, int]]:
+    """Every (day, start_min, end_min) physical interval occupied by the string."""
+    out: list[tuple[str, int, int]] = []
     for atom in parse_slot_string(slot_str):
-        for cell in SLOT_TO_CELLS.get(atom, []):
-            cells.add(cell)
-    return cells
+        out.extend(SLOT_TO_INTERVALS.get(atom, []))
+    return out
 
 
 def is_valid_slot(slot_str: str) -> bool:
     atoms = parse_slot_string(slot_str)
     if not atoms:
         return False
-    return all(a in SLOT_TO_CELLS for a in atoms)
+    return all(a in SLOT_TO_INTERVALS for a in atoms)
 
 
-def band_label(idx: int) -> str:
-    s, e = TIME_BANDS[idx]
-    return f"{s} – {e}"
+def intervals_overlap(a: tuple[str, int, int], b: tuple[str, int, int]) -> bool:
+    """Two intervals overlap iff same day and their [start,end) touch."""
+    if a[0] != b[0]:
+        return False
+    return a[1] < b[2] and b[1] < a[2]
 
 
-def band_start_hour(idx: int) -> float:
-    """Return the start time as a float hour (e.g. 08:55 -> 8.916)."""
-    s, _ = TIME_BANDS[idx]
-    h, m = map(int, s.split(":"))
-    return h + m / 60.0
+def any_overlap(intervals_a: list, intervals_b: list) -> bool:
+    for a in intervals_a:
+        for b in intervals_b:
+            if intervals_overlap(a, b):
+                return True
+    return False
 
 
-def band_end_hour(idx: int) -> float:
-    _, e = TIME_BANDS[idx]
-    h, m = map(int, e.split(":"))
-    return h + m / 60.0
+def fmt_minutes(m: int) -> str:
+    return f"{m // 60:02d}:{m % 60:02d}"
+
+
+def theory_band_label(idx: int) -> str:
+    s, e = THEORY_BANDS[idx]
+    return f"{fmt_minutes(s)}–{fmt_minutes(e)}"
+
+
+def lab_band_label(idx: int) -> str:
+    s, e = LAB_BANDS[idx]
+    return f"{fmt_minutes(s)}–{fmt_minutes(e)}"
+
+
+def is_lab_atom(atom: str) -> bool:
+    """True if a slot atom is a lab slot (L1..L60)."""
+    if not atom:
+        return False
+    a = atom.upper()
+    return a.startswith("L") and a[1:].isdigit()
+
+
+# Credit inference (for validation / UI hints)
+CREDIT_HINTS: dict[int, str] = {
+    1: "Single tutorial slot (TA1, TB1, …)",
+    2: "Single lecture slot (A1, B1, …)",
+    3: "Lecture + tutorial pair (A1+TA1)",
+    4: "Lecture + tutorial + tertiary (A1+TA1+TAA1) — or Theory+Lab combo",
+}

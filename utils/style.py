@@ -242,7 +242,7 @@ header[data-testid="stHeader"] { background: transparent; }
 
 /* Timetable */
 .tt-wrap { overflow-x: auto; border:1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-.tt { width:100%; border-collapse: separate; border-spacing: 0; }
+.tt { width:100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
 .tt th, .tt td {
   border-right: 1px solid var(--line-2);
   border-bottom: 1px solid var(--line-2);
@@ -250,30 +250,51 @@ header[data-testid="stHeader"] { background: transparent; }
 }
 .tt th:last-child, .tt td:last-child { border-right: none; }
 .tt tr:last-child td { border-bottom: none; }
-.tt-th {
-  padding: 12px 10px; font-weight: 500; font-size: 12px;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+.tt-th, .tt-th-sub {
+  padding: 8px 4px; font-weight: 500; font-size: 10px;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
   background: var(--bg); text-align: center;
 }
-.tt-th-time { text-align: left; padding-left: 16px; }
-.tt-time {
-  font-family:'Geist Mono', monospace; color: var(--muted);
-  font-size: 11px; padding: 10px 16px; white-space: nowrap;
+.tt-th { font-size: 11px; font-weight: 600; color: var(--ink-2); }
+.tt-th-day { text-align: left; padding: 10px 12px; width: 90px; }
+.tt-th-sub { font-size: 9px; padding: 6px 3px; font-family: 'Geist Mono', monospace; text-transform: none; letter-spacing: 0.02em; line-height: 1.25; color: var(--muted); background: #F8FAFC; }
+.tt-sub-empty { color: #CBD5E1; }
+.tt-day {
   background: var(--bg);
+  padding: 8px 12px;
+  text-align: left;
+  min-width: 90px;
 }
+.tt-day-name {
+  font-weight: 600; font-size: 12px; color: var(--ink); letter-spacing: -0.01em;
+}
+.tt-day-lane {
+  font-family: 'Geist Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; color: var(--muted); margin-top: 2px;
+}
+.tt-day-lab { border-top: 1px dashed var(--line-2); }
 .tt-cell {
-  height: 74px; min-width: 152px; padding: 8px 10px; text-align:left;
+  height: 56px; padding: 5px 6px; text-align: center; position: relative;
+  font-family: 'Geist Mono', monospace;
 }
-.tt-empty { background: var(--surface); }
-.tt-filled { position: relative; }
-.tt-code { font-weight:600; font-size:13px; letter-spacing:-0.01em; color:var(--ink); }
-.tt-fac  { font-size:11px; color:var(--ink-2); margin-top:2px;
-           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width: 148px; }
-.tt-slot { font-family:'Geist Mono', monospace; font-size:10px;
-           color:var(--muted); margin-top: 4px; letter-spacing: 0.02em; }
-.tt-tag  { display:inline-block; padding: 1px 5px; border-radius: 4px;
-           background: rgba(15,23,42,.08); color: var(--ink); margin-right:6px;
-           font-weight:600; }
+.tt-cell-empty { background: var(--surface); }
+.tt-cell-gap { background: repeating-linear-gradient(45deg, transparent 0 4px, #F8FAFC 4px 8px); }
+.tt-cell-hint {
+  font-size: 9px; color: #CBD5E1; letter-spacing: 0.04em;
+  font-family: 'Geist Mono', monospace;
+}
+.tt-filled { }
+.tt-code { font-weight: 700; font-size: 11px; letter-spacing: -0.01em; color: var(--ink); font-family: 'Geist', sans-serif; }
+.tt-fac  { font-size: 9px; color: var(--ink-2); margin-top: 1px;
+           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+           font-family: 'Geist', sans-serif; }
+.tt-slot { font-family: 'Geist Mono', monospace; font-size: 9px;
+           color: var(--muted); margin-top: 2px; letter-spacing: 0.02em; }
+.tt-tag  { display: inline-block; padding: 0 4px; border-radius: 3px;
+           background: rgba(15,23,42,.14); color: var(--ink); margin-right: 4px;
+           font-weight: 700; font-size: 8px; }
+.tt-tag-lab { background: rgba(15,23,42,.08); }
+.tt-day-lab-row td { background: #FCFCFA; }
 
 /* Divider */
 .ss-hr { height:1px; background: var(--line); margin: 22px 0; border:0; }

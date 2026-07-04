@@ -2,7 +2,7 @@
 from __future__ import annotations
 import streamlit as st
 
-from utils.timetable import build_timetable_grid, grid_to_html
+from utils.timetable import grid_to_html, build_color_map
 
 
 def render_timetable_view() -> None:
@@ -21,11 +21,10 @@ def render_timetable_view() -> None:
         )
         return
 
-    grid, colors = build_timetable_grid(selected)
-    html = grid_to_html(grid, colors)
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(grid_to_html(selected), unsafe_allow_html=True)
 
     # Legend
+    colors = build_color_map(selected)
     legend_items = "".join(
         f'<span class="ss-chip"><span style="width:10px;height:10px;border-radius:3px;background:{colors[c["course_code"]]};display:inline-block;margin-right:6px;"></span>{c["course_code"]} · {c["course_name"]}</span>'
         for c in selected

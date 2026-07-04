@@ -1,113 +1,110 @@
-"""Automatic timetable combination generator."""
+"""Automatic timetable combination generator (Tue–Sat)."""
 from __future__ import annotations
 from itertools import product
 import pandas as pd
-from .data import load_courses, load_faculty, faculty_for_course
+
+from .data import load_courses, faculty_for_course
 from .clash import combo_clash
-from .slots import band_start_hour, band_end_hour, slots_to_cells
+from .slots import intervals_of_slot
 
 
-def _course_type(course_name: str, courses: pd.DataFrame) -> str:
-    row = courses[courses["Course Name"] == course_name]
-    if row.empty:
-        return "Theory"
-    return str(row.iloc[0]["Course Type"])
+def _course_row(course_code: str, courses: pd.DataFrame) -> pd.Series | None:
+    row = courses[courses["Course Code"] == course_code]
+    return None if row.empty else row.iloc[0]
 
 
-def _credits(course_name: str, courses: pd.DataFrame) -> int:
-    row = courses[courses["Course Name"] == course_name]
-    if row.empty:
-        return 0
-    try:
-        return int(row.iloc[0]["Credits"])
-    except Exception:
-        return 0
-
-
-def build_offerings_for_course(course_name: str) -> list[dict]:
-    """Return every valid (theory, lab) offering combination for one course."""
+def build_offerings_for_course(course_code: str) -> list[dict]:
+    """Every (theory, lab) offering combination for one course."""
     courses = load_courses()
-    ctype = _course_type(course_name, courses).lower()
-    theory_df = faculty_for_course(course_name, "Theory")
-    lab_df = faculty_for_course(course_name, "Lab")
-    credits = _credits(course_name, courses)
+    row = _course_row(course_code, courses)
+    if row is None:
+        return []
+
+    course_name = str(row["Course Name"])
+    credits = int(row["Credits"]) if str(row["Credits"]).isdigit() else 0
+    ctype = str(row["Course Type"]).lower()
+
+    theory_df = faculty_for_course(course_code, "Theory")
+    lab_df = faculty_for_course(course_code, "Lab")
+
+    has_theory = ("theory" in ctype and not theory_df.empty) or (not theory_df.empty and "lab" not in ctype)
+    has_lab = "lab" in ctype and not lab_df.empty
 
     offerings: list[dict] = []
-    has_theory = "theory" in ctype and not theory_df.empty
-    has_lab = "lab" in ctype and not lab_df.empty
 
     if has_theory and has_lab:
         for _, t in theory_df.iterrows():
             for _, l in lab_df.iterrows():
-                offerings.append({
-                    "course_name": course_name,
-                    "course_code": _code(course_name, courses),
-                    "credits": credits,
-                    "faculty": f"{t['Faculty']} / {l['Faculty']}",
-                    "theory_slot": t["Slot"],
-                    "lab_slot": l["Slot"],
-                })
+                offerings.append(_offering(
+                    course_code, course_name, credits,
+                    t["FacultyName"], t["Slot"],
+                    l["FacultyName"], l["Slot"],
+                ))
     elif has_theory:
         for _, t in theory_df.iterrows():
-            offerings.append({
-                "course_name": course_name,
-                "course_code": _code(course_name, courses),
-                "credits": credits,
-                "faculty": t["Faculty"],
-                "theory_slot": t["Slot"],
-                "lab_slot": "",
-            })
+            offerings.append(_offering(
+                course_code, course_name, credits,
+                t["FacultyName"], t["Slot"], "", "",
+            ))
     elif has_lab:
         for _, l in lab_df.iterrows():
-            offerings.append({
-                "course_name": course_name,
-                "course_code": _code(course_name, courses),
-                "credits": credits,
-                "faculty": l["Faculty"],
-                "theory_slot": "",
-                "lab_slot": l["Slot"],
-            })
+            offerings.append(_offering(
+                course_code, course_name, credits,
+                "", "", l["FacultyName"], l["Slot"],
+            ))
     return offerings
 
 
-def _code(course_name: str, courses: pd.DataFrame) -> str:
-    row = courses[courses["Course Name"] == course_name]
-    return "" if row.empty else str(row.iloc[0]["Course Code"])
+def _offering(code: str, name: str, credits: int,
+              tfac: str, tslot: str, lfac: str, lslot: str) -> dict:
+    if tfac and lfac:
+        faculty = f"{tfac}  ·  {lfac}"
+    else:
+        faculty = tfac or lfac
+    return {
+        "course_code":    code,
+        "course_name":    name,
+        "credits":        credits,
+        "faculty":        faculty,
+        "faculty_theory": tfac,
+        "faculty_lab":    lfac,
+        "theory_slot":    tslot,
+        "lab_slot":       lslot,
+    }
 
 
 def is_day_scholar_valid(combo: list[dict],
-                         earliest: float = 9.0, latest: float = 18.0) -> bool:
-    """Reject combos with any class starting before 9:00 or ending after 18:00."""
+                         earliest: int = 9 * 60, latest: int = 18 * 60) -> bool:
+    """Reject combos with any class starting before 09:00 or ending after 18:00."""
     for off in combo:
         for slot_str in (off.get("theory_slot", ""), off.get("lab_slot", "")):
             if not slot_str:
                 continue
-            for (_, band_idx) in slots_to_cells(slot_str):
-                if band_start_hour(band_idx) < earliest:
+            for (_, start, end) in intervals_of_slot(slot_str):
+                if start < earliest:
                     return False
-                if band_end_hour(band_idx) > latest:
+                if end > latest:
                     return False
     return True
 
 
-def generate_options(course_names: list[str],
+def generate_options(course_codes: list[str],
                      day_scholar: bool = False,
-                     max_options: int = 50) -> list[list[dict]]:
-    """Cartesian product of offerings per course, filtered by clashes and mode."""
-    if not course_names:
+                     max_options: int = 30) -> list[list[dict]]:
+    if not course_codes:
         return []
-    per_course = [build_offerings_for_course(c) for c in course_names]
+    per_course = [build_offerings_for_course(c) for c in course_codes]
     if any(len(x) == 0 for x in per_course):
         return []
 
-    results: list[list[dict]] = []
+    out: list[list[dict]] = []
     for combo in product(*per_course):
         combo_list = list(combo)
         if combo_clash(combo_list):
             continue
         if day_scholar and not is_day_scholar_valid(combo_list):
             continue
-        results.append(combo_list)
-        if len(results) >= max_options:
+        out.append(combo_list)
+        if len(out) >= max_options:
             break
-    return results
+    return out

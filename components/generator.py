@@ -3,11 +3,11 @@ from __future__ import annotations
 import streamlit as st
 
 from utils.generator import generate_options
-from utils.timetable import build_timetable_grid, grid_to_html
+from utils.timetable import grid_to_html
 
 
 def _course_list_from_selection() -> list[str]:
-    return [c["course_name"] for c in st.session_state.selected_courses]
+    return [c["course_code"] for c in st.session_state.selected_courses]
 
 
 def render_generator() -> None:
@@ -27,10 +27,10 @@ def render_generator() -> None:
         return
 
     day_scholar = st.session_state.get("day_scholar_mode", False)
-    course_names = _course_list_from_selection()
+    course_codes = _course_list_from_selection()
 
     with st.spinner("Crunching every valid combination…"):
-        options = generate_options(course_names, day_scholar=day_scholar, max_options=30)
+        options = generate_options(course_codes, day_scholar=day_scholar, max_options=30)
 
     label_mode = "Day Scholar" if day_scholar else "Hosteller"
     st.markdown(
@@ -75,8 +75,8 @@ def render_generator() -> None:
                 st.markdown(f'<div class="ss-option-body"><ul>{items}</ul></div>',
                             unsafe_allow_html=True)
 
-                grid, colors = build_timetable_grid(combo)
-                st.markdown(grid_to_html(grid, colors), unsafe_allow_html=True)
+                grid_html = grid_to_html(combo)
+                st.markdown(grid_html, unsafe_allow_html=True)
 
                 if st.button("Apply this option", key=f"apply_{i}",
                              type="primary", use_container_width=True):

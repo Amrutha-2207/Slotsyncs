@@ -99,18 +99,21 @@ def _render_course_card(row: pd.Series) -> None:
         )
         st.markdown(meta_html, unsafe_allow_html=True)
 
-        theory_df = faculty_for_course(name, "Theory")
-        lab_df = faculty_for_course(name, "Lab") if "lab" in ctype else pd.DataFrame()
+        theory_df = faculty_for_course(code, "Theory")
+        lab_df = faculty_for_course(code, "Lab") if "lab" in ctype else pd.DataFrame()
 
         theory_choice = None
         lab_choice = None
 
         others = [c for c in st.session_state.selected_courses if c["course_code"] != code]
 
-        cols = st.columns(2 if (not theory_df.empty and not lab_df.empty) else 1)
+        # Layout columns: 2 for Theory+Lab courses, 1 otherwise.
+        want_theory = ("theory" in ctype) or (not theory_df.empty)
+        want_lab = ("lab" in ctype)
+        cols = st.columns(2 if (want_theory and want_lab) else 1)
         col_idx = 0
 
-        if "theory" in ctype or not theory_df.empty:
+        if want_theory:
             with cols[col_idx]:
                 st.markdown('<div class="ss-mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Theory</div>', unsafe_allow_html=True)
                 if theory_df.empty:
@@ -120,8 +123,8 @@ def _render_course_card(row: pd.Series) -> None:
                     values = []
                     for _, r in theory_df.iterrows():
                         conflicts = clashes_with(r["Slot"], others)
-                        options.append(_fmt_option(r["Slot"], r["Faculty"], conflicts))
-                        values.append((r["Slot"], r["Faculty"], conflicts))
+                        options.append(_fmt_option(r["Slot"], r["FacultyName"], conflicts))
+                        values.append((r["Slot"], r["FacultyName"], conflicts))
                     # preselect current if editing
                     default_idx = 0
                     if already and already.get("theory_slot"):
@@ -136,7 +139,7 @@ def _render_course_card(row: pd.Series) -> None:
                     theory_choice = values[options.index(picked)]
             col_idx += 1
 
-        if "lab" in ctype:
+        if want_lab:
             with cols[col_idx]:
                 st.markdown('<div class="ss-mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">Lab</div>', unsafe_allow_html=True)
                 if lab_df.empty:
@@ -146,8 +149,8 @@ def _render_course_card(row: pd.Series) -> None:
                     values = []
                     for _, r in lab_df.iterrows():
                         conflicts = clashes_with(r["Slot"], others)
-                        options.append(_fmt_option(r["Slot"], r["Faculty"], conflicts))
-                        values.append((r["Slot"], r["Faculty"], conflicts))
+                        options.append(_fmt_option(r["Slot"], r["FacultyName"], conflicts))
+                        values.append((r["Slot"], r["FacultyName"], conflicts))
                     default_idx = 0
                     if already and already.get("lab_slot"):
                         for i, v in enumerate(values):
