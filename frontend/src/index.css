@@ -113,3 +113,12 @@ code {
         border-bottom-color: inherit;
     }
 }
+
+/* Custom Overrides for Streamlit Component Clipping */
+.ss-selected {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+
