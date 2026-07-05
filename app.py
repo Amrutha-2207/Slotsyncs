@@ -31,8 +31,6 @@ inject_css()
 # ---------------- Session state ----------------
 if "selected_courses" not in st.session_state:
     st.session_state.selected_courses = []
-if "day_scholar_mode" not in st.session_state:
-    st.session_state.day_scholar_mode = False
 
 # Count this visitor (once per browser session).
 register_visit()
@@ -47,31 +45,23 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="ss-mono ss-mute" style="font-size:11px;letter-spacing:.14em;margin-bottom:6px;">MODE</div>',
-                unsafe_allow_html=True)
-    mode_labels = ["🏨  Hosteller", "🏠  Day Scholar"]
-    mode = st.radio(
-        "Mode", mode_labels,
-        index=1 if st.session_state.day_scholar_mode else 0,
-        label_visibility="collapsed",
-        key="mode_radio",
-    )
-    st.session_state.day_scholar_mode = (mode == mode_labels[1])
-    st.caption(
-        "Day scholars: options with any class before 9:00 AM or after 6:00 PM are filtered out."
-        if st.session_state.day_scholar_mode
-        else "Hostellers: all valid options are shown."
-    )
-
     st.markdown('<hr class="ss-hr"/>', unsafe_allow_html=True)
 
-    st.markdown('<div class="ss-mono ss-mute" style="font-size:11px;letter-spacing:.14em;margin-bottom:6px;">SESSION</div>',
+    st.markdown('<div class="ss-mono ss-mute" style="font-size:11px;letter-spacing:.14em;margin-bottom:6px;">SESSION SUMMARY</div>',
                 unsafe_allow_html=True)
     n = len(st.session_state.selected_courses)
-    total_credits = sum(int(c.get("credits", 0)) for c in st.session_state.selected_courses)
+    
+    # Safe handling logic to prevent integer casting crashes from raw datasets
+    total_credits = 0
+    for c in st.session_state.selected_courses:
+        try:
+            total_credits += int(c.get("credits", 0))
+        except (ValueError, TypeError):
+            pass
+
     st.markdown(
         f'<div style="font-family:\'Instrument Serif\',serif;font-size:24px;letter-spacing:-0.02em;">'
-        f'{n} courses<br/><span style="color:var(--muted);font-size:16px;">{total_credits} credits</span></div>',
+        f'{n} courses picked<br/><span style="color:var(--muted);font-size:16px;">{total_credits} total credits</span></div>',
         unsafe_allow_html=True,
     )
 
@@ -84,7 +74,7 @@ with st.sidebar:
     st.markdown('<hr class="ss-hr"/>', unsafe_allow_html=True)
     st.markdown(
         '<div class="ss-mono ss-mute" style="font-size:11px;letter-spacing:.14em;line-height:1.7;">'
-        'DATA · courses.csv<br/>DATA · faculty.csv<br/>SLOT · VIT-AP FFCS GRID'
+        'STATUS · PLATFORM ONLINE<br/>GRID · VIT-AP FFCS SPECIFICATION'
         '</div>',
         unsafe_allow_html=True,
     )
@@ -118,3 +108,4 @@ st.markdown(
     '<div class="ss-foot">SLOTSYNC · BUILT WITH CARE FOR VIT-AP · v1.0</div>',
     unsafe_allow_html=True,
 )
+

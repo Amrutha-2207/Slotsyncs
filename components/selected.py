@@ -33,12 +33,13 @@ def render_selected_panel() -> None:
         lab = c.get("lab_slot") or "—"
         fac = c.get("faculty") or "—"
         color = _swatch(i)
-        left_col, right_col = st.columns([6, 1])
-        with left_col:
+        
+        # Wrapped in a stable native container so block heights remain intact on phones
+        with st.container():
             st.markdown(
                 f'''
                 <div class="ss-selected" data-testid="selected-{code}"
-                     style="border-left: 4px solid {color};">
+                     style="border-left: 4px solid {color}; margin-bottom: 6px;">
                   <div class="left">
                     <div class="code">{code} · {c.get("credits",0)} credits</div>
                     <div class="name">{c["course_name"]}</div>
@@ -52,28 +53,30 @@ def render_selected_panel() -> None:
                 ''',
                 unsafe_allow_html=True,
             )
-        with right_col:
-            st.write("")
+            
+            # Action buttons sit safely under the card for fluid mobile tapping
             b1, b2 = st.columns(2)
             with b1:
-                if st.button("✏", key=f"edit_{code}", help="Edit this course",
-                             use_container_width=True):
+                # Appended the unique index tracking number '_i' to stop duplicate key freezes
+                if st.button("✏️ Edit", key=f"edit_{code}_{i}", help="Edit this course", use_container_width=True):
                     st.session_state["search_q"] = c["course_name"]
                     st.session_state["_scroll_target"] = "search"
                     st.rerun()
             with b2:
-                if st.button("🗑", key=f"del_{code}", help="Remove this course",
-                             use_container_width=True):
+                if st.button("🗑️ Remove", key=f"del_{code}_{i}", help="Remove this course", use_container_width=True):
                     st.session_state.selected_courses = [
                         x for x in selected if x["course_code"] != code
                     ]
                     st.toast(f"Removed {code}", icon="🗑️")
                     st.rerun()
+            
+            # Layout spacer to guarantee different rows never overlap or crowd each other
+            st.write('<div style="margin-bottom:12px;"></div>', unsafe_allow_html=True)
 
     st.markdown(
         f'''
         <div class="ss-panel" data-testid="selected-summary"
-             style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+             style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
           <div class="ss-mono ss-mute" style="font-size:12px;letter-spacing:.12em;">
             {len(selected)} COURSES SELECTED
           </div>
