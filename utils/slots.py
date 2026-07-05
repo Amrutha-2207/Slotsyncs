@@ -31,12 +31,12 @@ THEORY_BANDS = [
     (900,  950),   # HR 8:  15:00–15:50
     (960,  1010),  # HR 9:  16:00–16:50
     (1020, 1070),  # HR 10: 17:00–17:50
-    (1060, 1110),  # HR 11: 17:40–18:30 -> Notice this matches the L40 afternoon block!
+    (1060, 1110),  # HR 11: 17:40–18:30 -> Matches the L40 afternoon block!
 ]
 
 # Lab: 6 morning + 6 afternoon (12 total). Lunch between LP6 and LP7.
 LAB_BANDS = [
-    (480,  530),   # HR 1:  08:00–08:50 (L1, L7, ...)
+    (480,  530),   # HR 1:  08:00–08:50
     (530,  580),   # HR 2:  08:50–09:40
     (590,  640),   # HR 3:  09:50–10:40
     (640,  690),   # HR 4:  10:40–11:30
@@ -45,8 +45,8 @@ LAB_BANDS = [
     (840,  890),   # HR 7:  14:00–14:50
     (890,  940),   # HR 8:  14:50–15:40
     (950,  1000),  # HR 9:  15:50–16:40
-    (1000, 1050),  # HR 10: 16:40–17:30 (L39, ...)
-    (1060, 1110),  # HR 11: 17:40–18:30 (L40, ... Matches theory HR 11 accurately!)
+    (1000, 1050),  # HR 10: 16:40–17:30
+    (1060, 1110),  # HR 11: 17:40–18:30 -> This is exactly where L40 sits on the grid!
     (1110, 1150),  # HR 12: 18:30–19:10
 ]
 
@@ -60,14 +60,14 @@ THEORY_GRID: dict[str, list[str]] = {
     "SAT": ["TDD1", "E1/SE2", "C1",      "TF1/G1",    "A1",        "", "D2",     "E2/SD1",   "TAA2/ECS", "TBB2/CLUB", "TGG2"],
 }
 
-# Lab slots run L1..L60. Six per day per half. 
-# Explicitly padded mid-day gaps can be added here if you modify your grid rendering index.
+# Explicitly written grids matching structural timetable column locations.
+# "" handles structural hour cells that contain no lab slot codes.
 LAB_GRID: dict[str, list[str]] = {
-    "TUE": [f"L{i}" for i in (1,  2,  3,  4,  5,  6,  31, 32, 33, 34, 35, 36)],
-    "WED": [f"L{i}" for i in (7,  8,  9,  10, 11, 12, 37, 38, 39, 40, 41, 42)],
-    "THU": [f"L{i}" for i in (13, 14, 15, 16, 17, 18, 43, 44, 45, 46, 47, 48)],
-    "FRI": [f"L{i}" for i in (19, 20, 21, 22, 23, 24, 49, 50, 51, 52, 53, 54)],
-    "SAT": [f"L{i}" for i in (25, 26, 27, 28, 29, 30, 55, 56, 57, 58, 59, 60)],
+    "TUE": ["L1",  "L2",  "L3",  "L4",  "L5",  "L6",  "",    "L31", "L32", "L33", "L34", "L35"],
+    "WED": ["L7",  "L8",  "L9",  "L10", "L11", "L12", "",    "L37", "L38", "L39", "L40", "L41"],
+    "THU": ["L13", "L14", "L15", "L16", "L17", "L18", "",    "L43", "L44", "L45", "L46", "L47"],
+    "FRI": ["L19", "L20", "L21", "L22", "L23", "L24", "",    "L49", "L50", "L51", "L52", "L53"],
+    "SAT": ["L25", "L26", "L27", "L28", "L29", "L30", "",    "L55", "L56", "L57", "L58", "L59"],
 }
 
 
@@ -83,6 +83,9 @@ def _build_slot_intervals() -> dict[str, list[tuple[str, int, int]]]:
                     m.setdefault(atom, []).append((day, start, end))
     for day, cells in LAB_GRID.items():
         for i, atom in enumerate(cells):
+            # Guard to ensure empty padding strings do not crash or register as valid keys
+            if not atom:
+                continue
             start, end = LAB_BANDS[i]
             m.setdefault(atom.upper(), []).append((day, start, end))
     return m
