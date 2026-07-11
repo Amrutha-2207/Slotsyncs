@@ -201,8 +201,37 @@ ruff check .
 Push to `main` — Streamlit Cloud redeploys automatically.
 
 ---
+## 🤖 Development Transparency
+
+This project was built using modern AI-assisted development tools:
+
+- **Emergent AI** — Used for scaffolding the initial project structure, generating boilerplate code, and rapid prototyping during the 14-hour build sprint
+- **ChatGPT** — Debugging partner for fixing the slot clash detection algorithm and CSS layout issues
+- **Google AI Studio (Gemini)** — Testing the data pipeline and validating faculty CSV parsing logic
+
+**What I personally wrote/designed:**
+- ✅ The entire clash detection algorithm logic (`utils/clash.py`) — interval-based overlap checking that handles compound slots like TC1/G1
+- ✅ Data schema design for `courses.csv` and `faculty.csv` (atomic slot decomposition, credit validation)
+- ✅ Timetable generation algorithm (`utils/generator.py`) — cartesian product of faculty combinations with day-scholar filtering
+- ✅ UI/UX design decisions (Instrument Serif typography, soft color palette, 4-step flow)
+- ✅ Deployment architecture (Streamlit Cloud + persistent visitor counter integration)
+
+**What AI helped accelerate:**
+- ⚡ Initial Streamlit boilerplate and component structure
+- ⚡ CSS styling for the timetable grid (I designed it, AI wrote the CSS)
+- ⚡ ReportLab PDF export code (I specified the layout, AI implemented it)
+- ⚡ Handling edge cases in CSV parsing (tolerant schema with back-fill logic)
+
+**Code Ownership Proof:**
+- I can explain every function in this codebase without looking at the code
+- [Link to detailed architecture walkthrough] 
+- [Link to demo video where I explain the clash detection algorithm] 
+
+This is the reality of modern software engineering in 2026 — AI tools are productivity multipliers, not replacements for engineering judgment. The hard parts (algorithm design, data modeling, deployment debugging) still require human expertise.
+
+If you're a recruiter or interviewer reading this: I'm happy to do a live code review session where I explain any part of this codebase in depth. Transparency > hiding tool usage.
 
 ## ❤️ Credits
 
-Built for VIT-AP by Amrutha and contributors. Feedback and pull
+Built for VIT-AP by Amrutha . Feedback and pull
 requests welcome.
