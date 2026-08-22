@@ -63,7 +63,7 @@ Lab credits are counted separately via the `Lab` component in
 ```csv
 Course Code,Course Name,Credits,Course Type
 CSE2001,Data Structures and Algorithms,4,Theory+Lab
-CSE2002,Artificial Intelligence,4,Theory
+CSE3002,Artificial Intelligence,4,Theory
 MAT2001,Discrete Mathematical Structures,4,Theory
 STS1001,Qualitative and Quantitative Skills Practice I (STS),1,Theory
 ```
