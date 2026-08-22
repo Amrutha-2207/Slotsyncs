@@ -222,10 +222,7 @@ This project was built using modern AI-assisted development tools:
 - ⚡ ReportLab PDF export code (I specified the layout, AI implemented it)
 - ⚡ Handling edge cases in CSV parsing (tolerant schema with back-fill logic)
 
-**Code Ownership Proof:**
-- I can explain every function in this codebase without looking at the code
-- [Link to detailed architecture walkthrough] 
-- [Link to demo video where I explain the clash detection algorithm] 
+
 
 This is the reality of modern software engineering in 2026 — AI tools are productivity multipliers, not replacements for engineering judgment. The hard parts (algorithm design, data modeling, deployment debugging) still require human expertise.
 
