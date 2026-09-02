@@ -23,8 +23,6 @@ Designed like Linear. Built with Streamlit. Deployed on Streamlit Cloud.
 - **Independent Theory + Lab selection** per course
 - **Automatic timetable generator** — every valid faculty combination,
   clash-filtered, capped at 30 options
-- **Day-Scholar vs Hosteller** modes (Day Scholar filters out anything
-  starting before 09:00 or ending after 18:00)
 - **PDF export** — landscape A4 with the timetable grid + course list
 - **Persistent visitor counter** (survives Streamlit Cloud restarts,
   free service, no keys needed)
@@ -98,7 +96,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-The app opens at `http://localhost:8501`.
+The app opens at `https://slotsyncs.streamlit.app/`.
 
 ---
 
@@ -221,12 +219,11 @@ This project was built using modern AI-assisted development tools:
 - ⚡ CSS styling for the timetable grid (I designed it, AI wrote the CSS)
 - ⚡ ReportLab PDF export code (I specified the layout, AI implemented it)
 - ⚡ Handling edge cases in CSV parsing (tolerant schema with back-fill logic)
-
+- ⚡ Code generation for the given Logic.
 
 
 This is the reality of modern software engineering in 2026 — AI tools are productivity multipliers, not replacements for engineering judgment. The hard parts (algorithm design, data modeling, deployment debugging) still require human expertise.
 
-If you're a recruiter or interviewer reading this: I'm happy to do a live code review session where I explain any part of this codebase in depth. Transparency > hiding tool usage.
 
 ## ❤️ Credits
 
