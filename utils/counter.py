@@ -13,7 +13,7 @@ import streamlit as st
 _LOCAL_FILE = Path(__file__).resolve().parent.parent / "data" / "visitor_count.json"
 
 # Namespace/key used on abacus.jasoncameron.dev. Change these for a fresh counter.
-_NAMESPACE = "slotsync-vitap"
+_NAMESPACE = "slotsync-vitap_sem-4"
 _KEY = "visits"
 
 _BASE = f"https://abacus.jasoncameron.dev"
