@@ -1,4 +1,3 @@
-
 """CSV data loading (Tue–Sat grid, new faculty schema).
 
 courses.csv columns:
@@ -14,8 +13,6 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-
-from utils.slots import intervals_of_slot
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -37,7 +34,6 @@ REQUIRED_FACULTY_COLS = [
     "Slot",
 ]
 
-# Alternative column names accepted for compatibility.
 _FACULTY_ALIASES = {
     "CourseCode": ["CourseCode", "Course Code", "Code"],
     "CourseName": ["CourseName", "Course Name", "Course"],
@@ -179,44 +175,23 @@ def load_faculty() -> pd.DataFrame:
     return df.reset_index(drop=True)
 
 
-def is_day_scholar_slot(slot: str) -> bool:
-    """Return True if every slot interval is within 9 AM–6 PM."""
-    intervals = intervals_of_slot(slot)
-
-    if not intervals:
-        return False
-
-    return all(
-        start >= 9 * 60 and end <= 18 * 60
-        for _, start, end in intervals
-    )
-
-
 def faculty_for_course(
     course_code: str,
     component: str,
 ) -> pd.DataFrame:
-    """Get faculty offerings for a course and component."""
+    """Get all faculty offerings for a course and component."""
     fac = load_faculty()
 
     if fac.empty:
         return fac
 
-    result = fac[
+    return fac[
         (fac["CourseCode"].str.casefold() == str(course_code).casefold())
         & (
             fac["Component"].str.casefold()
             == str(component).casefold()
         )
     ].reset_index(drop=True)
-
-    # Filter offerings when Day Scholar Mode is enabled.
-    if st.session_state.get("day_scholar_mode", False):
-        result = result[
-            result["Slot"].apply(is_day_scholar_slot)
-        ].reset_index(drop=True)
-
-    return result
 
 
 def data_status() -> dict:
