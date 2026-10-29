@@ -107,14 +107,25 @@ def load_faculty() -> pd.DataFrame:
     return df.reset_index(drop=True)
 
 
+
 def faculty_for_course(course_code: str, component: str) -> pd.DataFrame:
     fac = load_faculty()
+
     if fac.empty:
         return fac
-    return fac[
+
+    result = fac[
         (fac["CourseCode"].str.casefold() == str(course_code).casefold())
         & (fac["Component"].str.casefold() == component.casefold())
     ].reset_index(drop=True)
+
+    if st.session_state.get("day_scholar_mode", False):
+        result = result[
+            result["Slot"].apply(is_day_scholar_slot)
+        ].reset_index(drop=True)
+
+    return result
+
 
 
 def data_status() -> dict:
@@ -123,6 +134,23 @@ def data_status() -> dict:
     return {
         "num_courses":          int(len(courses)),
         "num_faculty":          int(faculty["FacultyName"].nunique()) if not faculty.empty else 0,
+
+from utils.slots import intervals_of_slot
+
+
+def is_day_scholar_slot(slot: str) -> bool:
+    """Keep only slots fully contained within 09:00–18:00."""
+    intervals = intervals_of_slot(slot)
+
+    if not intervals:
+        return False
+
+    return all(
+        start >= 9 * 60 and end <= 18 * 60
+        for _, start, end in intervals
+    )
+        
+        
         "num_faculty_offerings": int(len(faculty)),
         "courses_csv_present": COURSES_CSV.exists(),
         "faculty_csv_present": FACULTY_CSV.exists(),
