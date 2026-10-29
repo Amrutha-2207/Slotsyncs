@@ -11,8 +11,7 @@ from .slots import (
 )
 
 
-# Soft, non-harsh palette (Apple/Linear inspired) used to distinctively
-# background-color filled course slots in the rendered HTML grid.
+# Soft, non-harsh palette (Apple/Linear inspired).
 SOFT_COLORS = [
     "#DBEAFE", "#DCFCE7", "#FEF3C7", "#FCE7F3", "#EDE9FE",
     "#FFE4E6", "#CFFAFE", "#FEF9C3", "#E0F2FE", "#F3E8FF",
@@ -20,23 +19,17 @@ SOFT_COLORS = [
 ]
 
 
-# Pads the 10 theory slots for a given day into a 12-column layout.
-# This ensures perfect row-by-row alignment with the 12 lab bands.
-# Columns 6 (index 5) and 12 (index 11) are intentionally left empty (None)
-# as they represent lab-only time periods (the lunch gap and evening tail).
+# Theory-row layout padded to 12 columns (col 6 and 12 are lab-only bands).
 def _theory_row_padded(day: str) -> list[str | None]:
     cells = THEORY_GRID[day]
     return [
         cells[0], cells[1], cells[2], cells[3], cells[4],
-        None,                            # lab-only gap column (12:30–13:10)
+        None,                            # lab-only gap (12:30–13:10)
         cells[5], cells[6], cells[7], cells[8], cells[9],
-        None,                            # lab-only tail column (18:30–19:10)
+        None,                            # lab-only tail (18:30–19:10)
     ]
 
 
-# Pads the 10 theory time bands into a 12-column format mirroring the theory row.
-# Places None elements at index 5 and index 11 to line up perfectly with the 
-# 12 distinct laboratory bands in the sub-header row.
 def _theory_band_padded() -> list[tuple[int, int] | None]:
     return [
         THEORY_BANDS[0], THEORY_BANDS[1], THEORY_BANDS[2],
@@ -48,25 +41,17 @@ def _theory_band_padded() -> list[tuple[int, int] | None]:
     ]
 
 
-# Splits a composite slot cell string (e.g., "A1/F1") by the slash character,
-# strips out excessive whitespace, converts to uppercase, and returns a clean 
-# set of unique atomic slots contained inside that specific grid position.
 def _cell_atoms(cell: str | None) -> set[str]:
     if not cell:
         return set()
     return {tok.strip().upper() for tok in cell.split("/") if tok.strip()}
 
 
-# Fetches and parses the slot string of a course dictionary based on its kind 
-# ('theory' vs 'lab'), converting it into a structured set of atomic slot units.
 def _course_atoms(course: dict, kind: str) -> set[str]:
     slot_str = course.get("theory_slot" if kind == "theory" else "lab_slot") or ""
     return set(parse_slot_string(slot_str))
 
 
-# Assigns a unique background color from the SOFT_COLORS palette to each 
-# course code present in the selected list, wrapping around if the list exceeds 
-# the palette size.
 def build_color_map(selected: list[dict]) -> dict[str, str]:
     return {
         c.get("course_code", f"C{i}"): SOFT_COLORS[i % len(SOFT_COLORS)]
@@ -83,8 +68,7 @@ def grid_to_html(selected: list[dict]) -> str:
         f'<th class="tt-th">HR {i}</th>' for i in range(1, 13)
     )
 
-    # Sub-header: Renders theory band time frames. Renders an empty spacer block
-    # whenever the theory band falls into a lab-only column gap.
+    # Sub-header: theory bands
     theory_bands_sub = ""
     for band in _theory_band_padded():
         if band is None:
@@ -95,16 +79,13 @@ def grid_to_html(selected: list[dict]) -> str:
                 f'<th class="tt-th-sub">{_fmt(s)}<br/>{_fmt(e)}</th>'
             )
 
-    # Sub-header: Renders all 12 sequential lab time bands cleanly underneath 
-    # the theory row bands.
+    # Sub-header: lab bands
     lab_bands_sub = ""
     for s, e in LAB_BANDS:
         lab_bands_sub += (
             f'<th class="tt-th-sub">{_fmt(s)}<br/>{_fmt(e)}</th>'
         )
 
-    # Iterates over each structured academic day, generating adjacent pairs 
-    # of Theory rows and Lab rows sharing a unified day label block.
     body_rows: list[str] = []
     for day in DAYS:
         theory_cells = _render_theory_row(day, selected, color_map)
@@ -119,7 +100,6 @@ def grid_to_html(selected: list[dict]) -> str:
             f'{lab_cells}</tr>'
         )
 
-    # Combines all segments into a standalone HTML matrix component block.
     return (
         '<div class="tt-wrap"><table class="tt"><thead>'
         f'<tr><th class="tt-th tt-th-day" rowspan="3">Day</th>{hour_headers}</tr>'
@@ -131,26 +111,19 @@ def grid_to_html(selected: list[dict]) -> str:
     )
 
 
-# Formats raw integer minutes elapsed since midnight into a standard 
-# 24-hour digital clock display string (HH:MM).
 def _fmt(m: int) -> str:
     return f"{m // 60:02d}:{m % 60:02d}"
 
 
-# Generates the 12-cell HTML row for theory targets. Handles the structural None 
-# slots as layout breaks, evaluates slot overlap, and embeds course information 
-# matching the student selection.
 def _render_theory_row(day: str, selected: list[dict], color_map: dict[str, str]) -> str:
     padded = _theory_row_padded(day)
     out: list[str] = []
     for cell in padded:
         if cell is None:
-            # Renders structural space block elements matching the lab-only grid segments.
             out.append('<td class="tt-cell tt-cell-empty tt-cell-gap"></td>')
             continue
         atoms = _cell_atoms(cell)
-        
-        # Intersects cell slot targets against student course details to isolate matches.
+        # Which course (if any) occupies this cell via a matching atom?
         owner = None
         matched_atom = ""
         for c in selected:
@@ -160,9 +133,7 @@ def _render_theory_row(day: str, selected: list[dict], color_map: dict[str, str]
                 owner = c
                 matched_atom = sorted(hit)[0]
                 break
-                
         if owner:
-            # Appends structured component layout displaying code, faculty name, and active slot tags.
             color = color_map.get(owner["course_code"], "#F3F4F6")
             out.append(
                 f'<td class="tt-cell tt-filled" style="background:{color};">'
@@ -172,7 +143,6 @@ def _render_theory_row(day: str, selected: list[dict], color_map: dict[str, str]
                 f'</td>'
             )
         else:
-            # Fallback block printing slot placeholder markers for empty/unregistered cells.
             out.append(
                 f'<td class="tt-cell tt-cell-empty">'
                 f'<span class="tt-cell-hint">{cell}</span></td>'
@@ -180,8 +150,6 @@ def _render_theory_row(day: str, selected: list[dict], color_map: dict[str, str]
     return "".join(out)
 
 
-# Generates the 12-cell HTML row for laboratory slots, evaluating and matching 
-# selections directly against the 12 continuous lab units.
 def _render_lab_row(day: str, selected: list[dict], color_map: dict[str, str]) -> str:
     cells = LAB_GRID[day]
     out: list[str] = []
@@ -193,7 +161,6 @@ def _render_lab_row(day: str, selected: list[dict], color_map: dict[str, str]) -
                 owner = c
                 break
         if owner:
-            # Appends custom color filled lab cell structures to the row output stream.
             color = color_map.get(owner["course_code"], "#F3F4F6")
             out.append(
                 f'<td class="tt-cell tt-filled" style="background:{color};">'
@@ -203,7 +170,6 @@ def _render_lab_row(day: str, selected: list[dict], color_map: dict[str, str]) -
                 f'</td>'
             )
         else:
-            # Fallback block printing slot placeholder markers for empty lab slots.
             out.append(
                 f'<td class="tt-cell tt-cell-empty">'
                 f'<span class="tt-cell-hint">{atom_u}</span></td>'
