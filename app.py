@@ -36,6 +36,7 @@ if "selected_courses" not in st.session_state:
 register_visit()
 
 # ---------------- Sidebar ----------------
+
 with st.sidebar:
     st.markdown(
         '<div style="padding: 8px 4px 16px 4px;">'
@@ -44,6 +45,18 @@ with st.sidebar:
         'VIT-AP · FFCS PLANNER</div></div>',
         unsafe_allow_html=True,
     )
+
+    st.session_state.setdefault("day_scholar_mode", False)
+
+    st.toggle(
+        "Day Scholar Mode (9 AM–6 PM)",
+        key="day_scholar_mode",
+        help="Hide class offerings outside 9 AM to 6 PM.",
+    )
+
+    st.markdown('<hr class="ss-hr"/>', unsafe_allow_html=True)
+
+    
 
     st.markdown('<hr class="ss-hr"/>', unsafe_allow_html=True)
 
