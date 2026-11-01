@@ -1,7 +1,8 @@
 Course Code,Course Name,Credits,Course Type
-CSE2001,Data Structures and Algorithms,4,Theory+Lab
-CSE3002,Artificial Intelligence,4,Theory+Lab
-ECE2002,Computer Architecture and Organization,4,Theory
-MAT1003,Discrete Mathematical Structures,4,Theory
-STS2010,Qualitative and Quantitative Skills Practice I ,1,Theory
+ECE3006,HDL Verification and Methodology,4,Theory+Lab
+ECE2016,Engineering Electromagnetics,4,Theory
+ECE2006,Communication Systems,4,Theory+Lab
+ECE2003,Control Systems Engineering,4,Theory+Lab
 MGT1040,Entrepreneurship,4,Theory
+STS2011,Qualitative and Quantitative Skills Practice - II,1,Theory
+MAT1010,Probability and Statistics,4,Theory+Lab
